@@ -1,0 +1,13 @@
+{
+  "name": "hero-academy",
+  "version": "1.0.0",
+  "description": "A research-based multiplication game for kids learning their times tables.",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "test": "node tests/playthrough.test.js"
+  },
+  "devDependencies": {
+    "jsdom": "^24.1.0"
+  }
+}

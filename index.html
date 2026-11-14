@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hero Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#18181B;--bg:#F4F4F5;--yellow:#FACC15;--blue:#1D4ED8;--muted:#52525B}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);font-family:Inter,system-ui,sans-serif;color:var(--ink)}
+.wrap{max-width:1100px;margin:0 auto;padding:20px}
+.display{font-family:Bangers,Inter,sans-serif;letter-spacing:.5px;font-weight:400}
+h1,h2,h3{margin:0}
+.panel{background:#fff;border:3px solid var(--ink);border-radius:16px;padding:18px}
+.row{display:flex;gap:16px;flex-wrap:wrap}
+.col{display:flex;flex-direction:column;gap:12px}
+.btn{font:inherit;border:3px solid var(--ink);border-radius:14px;padding:10px 18px;background:#fff;color:var(--ink);font-weight:800;font-size:16px;cursor:pointer;min-height:48px}
+.btn.primary{background:var(--blue);color:#fff}
+.btn.yellow{background:var(--yellow)}
+.btn.big{font-family:Bangers,Inter,sans-serif;font-weight:400;font-size:30px;letter-spacing:1px;padding:12px 26px}
+.btn.small{min-height:40px;font-size:14px;padding:6px 12px;border-width:2px;border-radius:10px}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+button:focus-visible,a:focus-visible,input:focus-visible,label:focus-within{outline:4px solid #93C5FD;outline-offset:2px}
+.label{font-size:13px;font-weight:800;letter-spacing:2px;color:#3F3F46;text-transform:uppercase}
+.muted{color:var(--muted)}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.pill{border:2px solid var(--ink);border-radius:999px;padding:6px 14px;font-weight:800;font-size:14px;background:#fff}
+.avatar{border:2px solid var(--ink);border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#E4E4E7;flex-shrink:0}
+.avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.avatar .def{color:#fff;width:100%;height:100%;display:flex;align-items:center;justify-content:center;text-align:center}
+.pad{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;width:260px;max-width:100%}
+.pad button{height:70px;font-family:Bangers,Inter,sans-serif;font-size:32px;border:3px solid var(--ink);border-radius:14px;background:#fff;cursor:pointer;color:var(--ink)}
+.pad button.go{background:var(--blue);color:#fff}
+.pad button.del{background:#E4E4E7;font-size:22px}
+.pad button:active{transform:translateY(2px)}
+.question{font-family:Bangers,Inter,sans-serif;font-size:clamp(60px,9vw,104px);line-height:1;display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:center}
+.ansbox{min-width:140px;height:1.15em;border:4px solid var(--blue);border-radius:14px;display:inline-flex;align-items:center;justify-content:center;padding:0 12px;background:#fff}
+.hp{height:20px;border:2px solid var(--ink);border-radius:999px;overflow:hidden;background:#fff}
+.hp>div{height:100%;background:#DC2626;transition:width .35s}
+.dots{display:flex;gap:5px;flex-wrap:wrap}
+.dot{width:13px;height:13px;border-radius:999px;border:2px solid var(--ink);background:#fff}
+.grid{display:flex;flex-direction:column;gap:5px}
+.grow{display:flex;gap:5px}
+.gdot{width:24px;height:24px;border-radius:999px;border:2px solid var(--ink)}
+.gdot.off{border:2px dashed #A1A1AA;background:transparent}
+.rank{display:inline-block;border:2px solid var(--ink);border-radius:999px;padding:2px 10px;font-size:12px;font-weight:800}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+.card{border:2px solid var(--ink);border-radius:12px;padding:8px;display:flex;flex-direction:column;gap:6px;background:#fff;align-items:center;text-align:center}
+.steps{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:18px}
+.steps li.now{font-weight:800}
+.note{background:#FEF9C3;border:2px solid var(--ink);border-radius:12px;padding:10px 14px;font-size:14px}
+.flash{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:10}
+.flash>div{background:var(--yellow);border:4px solid var(--ink);border-radius:20px;padding:18px 30px;display:flex;align-items:center;gap:18px;animation:pop .25s ease-out}
+@keyframes pop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+.shake{animation:shake .3s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:10px;font-size:14px;display:none;z-index:20;max-width:90vw}
+input[type=text]{font:inherit;border:2px solid var(--ink);border-radius:10px;padding:10px;width:100%;font-size:15px}
+.slot{display:flex;gap:12px;align-items:center;border:2px dashed #A1A1AA;border-radius:12px;padding:10px;flex-wrap:wrap;transition:background .15s,border-color .15s}
+.slot.active{border:2px solid var(--ink);box-shadow:0 0 0 3px var(--yellow)}
+.slot.drag{border:3px solid var(--blue);background:#DBEAFE}
+.slot .hint{font-size:12px;color:var(--muted)}
+.filebtn{position:relative;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);border-radius:10px;padding:6px 12px;font-weight:800;font-size:14px;min-height:40px;cursor:pointer;background:#fff}
+.filebtn input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid #E4E4E7}
+.roster{margin-top:16px;padding:12px 16px}
+.roster-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.rstrip{display:flex;gap:10px;overflow-x:auto;padding:10px 2px 4px}
+.rcell{flex:0 0 118px;border:2px solid #D4D4D8;border-radius:12px;padding:8px;display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;background:#fff;position:relative}
+.rcell.right{border-color:#15803D;background:#F0FDF4}
+.rcell.wrong{border-color:#B91C1C;background:#FEF2F2}
+.rcell.now{border:3px solid var(--blue);background:#EFF6FF}
+.rcell.todo .avatar{opacity:.55}
+.rbadge{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:800;color:#fff}
+.rbadge.right{background:#15803D}.rbadge.wrong{background:#B91C1C}.rbadge.now{background:var(--blue)}
+.rbadge.todo{background:#E4E4E7;color:#3F3F46}
+.rformula{font-family:Bangers,Inter,sans-serif;font-size:20px;line-height:1}
+.rgiven{font-size:11px;color:#7F1D1D}
+.rcell{padding-top:12px;overflow:hidden}
+.rstripe{position:absolute;left:0;right:0;top:0;height:6px}
+.tchip{display:inline-block;border-radius:6px;padding:1px 7px;font-size:11px;font-weight:800;color:#fff;letter-spacing:.3px}
+.rformula.ask{color:#3F3F46}
+.sumchip{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:800;border-radius:999px;padding:3px 10px;border:2px solid currentColor}
+.hthumbs{display:flex;gap:8px;flex-wrap:wrap}
+.ht{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px}
+.ht .avatar{border-width:3px}
+.ht.off .avatar{position:relative;border-style:dashed;border-color:#52525B}
+.ht.off .avatar::after,.lockwrap .avatar::after{content:'';position:absolute;inset:0;pointer-events:none}
+.ht.lk .avatar::after,.lockwrap .avatar::after{background:rgba(24,24,27,.38)}
+.ht.unp .avatar::after{background:rgba(255,255,255,.35)}
+.ht .lockmini{position:absolute;left:50%;top:24px;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:999px;background:rgba(255,255,255,.92);border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;pointer-events:none}
+.lockwrap{position:relative;display:inline-block}
+.lockwrap .avatar{position:relative;border-style:dashed;border-color:#52525B}
+.lockbadge{position:absolute;right:-6px;bottom:-6px;width:28px;height:28px;border-radius:999px;background:#fff;border:2px solid var(--ink);display:flex;align-items:center;justify-content:center}
+.card.locked{background:#FAFAFA;border-style:dashed}
+.ht.on .avatar{box-shadow:0 0 0 3px var(--yellow)}
+.ht .bolt{position:absolute;right:-6px;top:-6px;width:20px;height:20px;border-radius:999px;background:var(--yellow);border:2px solid var(--ink);display:flex;align-items:center;justify-content:center}
+.ht .lbl{font-size:11px;font-weight:800;color:#3F3F46}
+.ht.off .lbl{color:#71717A;font-weight:600}
+.hlegend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:#3F3F46}
+.homelink{display:inline-flex;align-items:center;gap:10px;background:none;border:none;padding:4px 8px;margin-left:-8px;border-radius:12px;cursor:pointer;color:var(--ink);font:inherit}
+.homelink .display{font-size:42px;text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:6px;text-decoration-color:var(--yellow)}
+.homelink:hover{background:#FEF9C3}
+.homelink:hover .display{color:var(--blue);text-decoration-color:var(--blue)}
+.homechip{display:inline-flex;align-items:center;gap:4px;border:2px solid var(--ink);border-radius:999px;padding:4px 10px;font-size:13px;font-weight:800;background:#fff}
+.homelink:hover .homechip{background:var(--yellow)}
+.streak{display:inline-flex;align-items:center;gap:5px;font-weight:800;font-size:14px}
+.hero2{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:18px}
+.vrow{display:flex;gap:18px;align-items:center}
+.vhead{font-family:Bangers,Inter,sans-serif;font-size:clamp(26px,3.6vw,36px);line-height:1}
+.shield{display:grid;grid-template-columns:repeat(15,minmax(0,1fr));gap:4px}
+.seg{height:22px;border-radius:4px;border:2px solid var(--ink);background:#7C3AED}
+.seg.broken{background:#F4F4F5;border-style:dashed}
+.nextcard{background:#FEF9C3;border:4px solid var(--ink);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:10px}
+.nextcard .btn.big{margin-top:auto}
+.howto{background:#fff;border:2px solid #D4D4D8;border-radius:14px;padding:12px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:16px}
+.loopbox{flex:1 1 420px;border:2px dashed #A1A1AA;border-radius:12px;padding:8px 10px;display:flex;flex-direction:column;gap:6px}
+.loophead{display:flex;justify-content:space-between;font-size:11px;font-weight:800;letter-spacing:1px;color:#3F3F46;gap:8px}
+.loopsteps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.step{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;border:2px solid #E4E4E7;background:#fff;font-size:13px;line-height:1.25}
+.step.active{background:#FEF9C3;border-color:var(--ink)}
+.step.done{background:#F0FDF4;border-color:#86EFAC}
+.stepnum{width:26px;height:26px;border-radius:999px;border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;background:#fff;flex-shrink:0}
+.step.active .stepnum{background:var(--yellow)}
+.step.done .stepnum{background:#15803D;color:#fff}
+.finalstep{flex:0 1 230px}
+.pathhead{display:flex;justify-content:space-between;align-items:baseline;margin:18px 0 10px;gap:10px;flex-wrap:wrap}
+.linkbtn{background:none;border:none;padding:6px 0;font:inherit;font-weight:700;font-size:14px;color:var(--blue);text-decoration:underline;cursor:pointer;min-height:40px}
+.linkbtn:hover{color:#1E3A8A}
+.path{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+.chap{background:#fff;border:3px solid var(--ink);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.chap.locked{background:#FAFAFA;border:2px dashed #A1A1AA}
+.chap.done{background:#F0FDF4;border:2px solid #15803D}
+.chap .acts{margin-top:auto;display:flex;flex-direction:column;gap:2px;align-items:stretch}
+.chip{font-size:11px;font-weight:800;border-radius:999px;padding:2px 8px;white-space:nowrap}
+.cbar{width:6px;height:26px;border-radius:3px;flex-shrink:0}
+.hthumbs.sm .ht .avatar{border-width:2px}
+.banner{background:var(--yellow);border:3px solid var(--ink);border-radius:16px;padding:16px 20px;margin-bottom:16px}
+@media (max-width:760px){
+  .hero2{grid-template-columns:1fr}
+  .vrow .avatar{width:64px!important;height:64px!important}
+  .vrow{gap:12px}
+  .loopsteps{grid-template-columns:1fr}
+  .finalstep{flex:1 1 100%}
+  .seg{height:14px}
+}
+@media (max-width:700px){.pad button{height:58px}.wrap{padding:12px}}
+</style>
+</head>
+<body>
+<div id="app" class="wrap"><p class="display" style="font-size:40px">HERO ACADEMY</p><p class="muted">Loading…</p></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+(function(){
+'use strict';
+
+/* ---------- Data model ---------- */
+const TEAMS={
+  D:{name:'The Doublers',power:'Double, then double again',color:'#1D4ED8',lessons:[{a:4,b:7},{a:8,b:6,note:'For 8s, use the power one more time: double, double, double!'}],practice:{a:4,b:6},stage:['#1D4ED8','#60A5FA','#FACC15','#F97316']},
+  T:{name:'Trio Force',power:'2 groups + 1 more group',color:'#6D28D9',lessons:[{a:3,b:6}],practice:{a:3,b:8},stage:['#A1A1AA','#FACC15']},
+  P:{name:'Plus-One Squad',power:'5 groups + the rest',color:'#BE185D',lessons:[{a:6,b:7}],practice:{a:6,b:6},stage:['#A1A1AA','#FACC15']}
+};
+const TEAM_ORDER=['D','T','P'];
+const TEAM_SHORT={D:'Doublers',T:'Trio Force',P:'Plus-One'};
+const TEAM_POSS={D:"The Doublers'",T:"Trio Force's",P:"The Plus-One Squad's"};
+const REVIEW_SLOTS=2;
+const TEAM_PLURAL={D:'Doublers',T:'Trio Force heroes',P:'Plus-One Squad heroes'};
+const FACTS=[['D',4,4],['D',4,6],['D',4,7],['D',4,8],['D',8,6],['D',8,7],['D',8,8],['T',3,3],['T',3,4],['T',3,6],['T',3,7],['T',3,8],['P',6,6],['P',6,7],['P',7,7]]
+  .map(function(x){return {k:x[1]+'x'+x[2],a:x[1],b:x[2],team:x[0]};});
+const RANKS=['Locked','Recruit','Bronze','Silver','Gold','Legend'];
+const RANK_BG=['#FFFFFF','#E4E4E7','#FED7AA','#DBEAFE','#FACC15','#DDD6FE'];
+const INTERVAL_DAYS=[0,0,1,3,7,21];
+const DAY=86400000;
+const FAST_MS=3000;
+const MISSION_FACTS=10, WARMUPS=2;
+
+/* ---------- Storage: private per-viewer db, else this browser, else memory ---------- */
+const DATA={}; const SHARED={}; let DB=null; let IS_OWNER=false; let MODE='memory'; let COL=null; const chains={}; const LS='hero-academy-v1';
+function clone(o){return JSON.parse(JSON.stringify(o));}
+async function initStore(){
+  let timer;
+  const timeout=new Promise(function(r){timer=setTimeout(function(){r('timeout');},10000);});
+  try{
+    const res=await Promise.race([(async function(){
+      if(typeof claude==='undefined'||!claude||!claude.use) return null;
+      const db=await claude.use('db'); const user=await claude.use('user');
+      if(!db||!user) return null;
+      const id=await user.id(); if(!id) return null;
+      const col=db.collection('data/users/'+id);
+      const snap=await col.get();
+      try{ IS_OWNER=!!(await Promise.resolve(user.isOwner())); }catch(e){}
+      let canWrite=null; try{ canWrite=await Promise.resolve(user.can('data.write')); }catch(e){}
+      try{ const sh=await db.collection('shared').get(); sh.docs.forEach(function(d){ if(d.exists) SHARED[d.id]=clone(d.data()); }); }catch(e){}
+      return {col:col,snap:snap,db:db,canWrite:canWrite};
+    })(),timeout]);
+    clearTimeout(timer);
+    if(res&&res!=='timeout'&&res.canWrite===false){
+      /* Viewer/Commenter: read the shared setup, keep own progress in this browser */
+      DB=res.db; useLocal(); return;
+    }
+    if(res&&res!=='timeout'){
+      MODE='db'; COL=res.col; DB=res.db;
+      res.snap.docs.forEach(function(d){ if(d.exists){ DATA[d.id]=clone(d.data()); } });
+      return;
+    }
+  }catch(e){ clearTimeout(timer); }
+  useLocal();
+}
+function useLocal(){
+  try{ const raw=localStorage.getItem(LS); MODE='local'; if(raw){ Object.assign(DATA,JSON.parse(raw)); } }
+  catch(e){ MODE='memory'; }
+}
+let switchedLocal=false;
+function fallBackToLocal(){
+  if(switchedLocal) return; switchedLocal=true; MODE='local';
+  try{ localStorage.setItem(LS,JSON.stringify(DATA)); }catch(e){ MODE='memory'; }
+  toast('Your progress will save in this browser.');
+}
+function put(id,obj){
+  DATA[id]=obj;
+  if(MODE==='db'){
+    chains[id]=(chains[id]||Promise.resolve()).then(function(){return COL.doc(id).set(clone(DATA[id]));})
+      .catch(function(e){
+        if(e&&e.code==='unavailable'){
+          return new Promise(function(r){setTimeout(r,700+Math.random()*900);})
+            .then(function(){return COL.doc(id).set(clone(DATA[id]));})
+            .catch(function(){toast("Couldn't save that change. Check your connection.");});
+        }
+        if(e&&e.code==='quota_exceeded'){toast('Storage is full. Try smaller pictures.');return;}
+        if(e&&(e.code==='invalid_argument'||e.code==='not_granted')){ fallBackToLocal(); return; }
+        toast("Couldn't save that change.");
+      });
+  }else if(MODE==='local'){
+    try{ localStorage.setItem(LS,JSON.stringify(DATA)); }
+    catch(e){ toast("This browser couldn't save that (pictures may be too big)."); }
+  }
+}
+
+function prog(){
+  let p=DATA.progress;
+  if(!p){ p={lessons:{D:false,T:false,P:false},facts:{},streak:{last:null,days:0},missions:0}; DATA.progress=p; }
+  FACTS.forEach(function(f){ if(!p.facts[f.k]) p.facts[f.k]={rank:0,due:0,times:[]}; });
+  if(!p.poweredEver){ p.poweredEver={}; FACTS.forEach(function(f){ if(p.facts[f.k].rank>=2) p.poweredEver[f.k]=true; }); }
+  return p;
+}
+/* Your own setup wins; otherwise fall back to the setup the owner shared */
+function merged(id){ const own=DATA[id]||{}, sh=SHARED[id]||{}; return {name:own.name||sh.name||'', img:safeImg(own.img)||safeImg(sh.img)||''}; }
+function chapterFacts(t){ return FACTS.filter(function(f){return f.team===t;}); }
+function chapterDone(t){ const p=prog(); return chapterFacts(t).every(function(f){return p.poweredEver[f.k];}); }
+function currentChapter(){ for(let i=0;i<TEAM_ORDER.length;i++){ if(!chapterDone(TEAM_ORDER[i])) return TEAM_ORDER[i]; } return null; }
+function poweredCount(t){ const p=prog(); return chapterFacts(t).filter(function(f){return p.poweredEver[f.k];}).length; }
+function heroOf(k){ return merged('hero-'+k); }
+function villainOf(){ return merged('villain'); }
+function placeName(){ return merged('settings').name||'your school'; }
+function heroName(f){ return heroOf(f.k).name||('Hero '+f.a+'×'+f.b); }
+function villainName(){ return villainOf().name||'The Villain'; }
+function safeImg(s){ return (typeof s==='string'&&s.indexOf('data:image/')===0)?s:''; }
+
+/* ---------- Helpers ---------- */
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+function startOfDay(t){ const d=new Date(t); d.setHours(0,0,0,0); return d.getTime(); }
+function dayKey(t){ const d=new Date(t); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
+function median(a){ if(!a||!a.length) return null; const s=a.slice().sort(function(x,y){return x-y;}); const m=Math.floor(s.length/2); return s.length%2?s[m]:(s[m-1]+s[m])/2; }
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+function factByKey(k){ return FACTS.find(function(f){return f.k===k;}); }
+let toastTimer;
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.style.display='block'; clearTimeout(toastTimer); toastTimer=setTimeout(function(){t.style.display='none';},Math.max(3500,msg.length*60)); }
+
+function avatarHTML(f,size){
+  const h=heroOf(f.k), img=safeImg(h.img), t=TEAMS[f.team];
+  const inner=img?'<img src="'+img+'" alt="'+esc(heroName(f))+'">'
+    :'<div class="def display" style="background:'+t.color+';font-size:'+Math.max(14,Math.round(size/3.6))+'px">'+f.a+'×'+f.b+'</div>';
+  return '<div class="avatar" style="width:'+size+'px;height:'+size+'px">'+inner+'</div>';
+}
+function villainAvatar(size){
+  const img=safeImg(villainOf().img);
+  const inner=img?'<img src="'+img+'" alt="'+esc(villainName())+'">'
+    :'<div class="def display" style="background:#3F3F46;font-size:'+Math.max(14,Math.round(size/4.5))+'px">VILLAIN</div>';
+  return '<div class="avatar" style="width:'+size+'px;height:'+size+'px">'+inner+'</div>';
+}
+const ICON_LOCK='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#18181B" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
+const ICON_LOCK_S=ICON_LOCK.replace('width="14" height="14"','width="11" height="11"');
+const ICON_HOME='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>';
+const ICON_FLAME='<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c1 3.5 5 5.5 5 10.5A5 5 0 0 1 7 12.5c0-2 1-3.5 2-4.5 0 2 1 3 2 3 0-3-1-6 1-9z" fill="#F97316" stroke="#18181B" stroke-width="1.5" stroke-linejoin="round"/></svg>';
+const ICON_BOLT='<svg width="12" height="12" viewBox="0 0 24 24" fill="#18181B" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg>';
+function rankPill(r){ return '<span class="rank" style="background:'+RANK_BG[r]+'">'+RANKS[r].toUpperCase()+'</span>'; }
+
+/* ---------- Strategy visuals ---------- */
+function strategySteps(a,b,team){
+  if(team==='D'){
+    const s=[{rows:1,text:'Start with one group of '+b+': 1 × '+b+' = '+b},
+      {rows:2,text:'DOUBLE it: '+b+' + '+b+' = '+(2*b)},
+      {rows:4,text:'DOUBLE again: '+(2*b)+' + '+(2*b)+' = '+(4*b)}];
+    if(a===8) s.push({rows:8,text:'DOUBLE one more time: '+(4*b)+' + '+(4*b)+' = '+(8*b)});
+    return s;
+  }
+  if(team==='T') return [{rows:2,text:'2 groups of '+b+' = '+(2*b)+' (your 2s!)'},{rows:3,text:'+ one more '+b+': '+(2*b)+' + '+b+' = '+(3*b)}];
+  if(team==='P'){
+    const extra=a-5;
+    return [{rows:5,text:'5 groups of '+b+' = '+(5*b)+' (your 5s!)'},
+      {rows:a,text:extra===1?('+ one more '+b+': '+(5*b)+' + '+b+' = '+(a*b)):('+ '+extra+' more groups of '+b+' ('+(extra*b)+'): '+(5*b)+' + '+(extra*b)+' = '+(a*b))}];
+  }
+  return [{rows:a,text:a+' groups of '+b+' = '+(a*b)}];
+}
+function gridHTML(a,b,team,visibleRows){
+  const steps=strategySteps(a,b,team);
+  const stage=(TEAMS[team]&&TEAMS[team].stage)||['#A1A1AA'];
+  let html='<div class="grid" role="img" aria-label="'+a+' rows of '+b+' dots">';
+  for(let r=0;r<a;r++){
+    let si=steps.findIndex(function(s){return r<s.rows;}); if(si<0) si=steps.length-1;
+    const on=r<visibleRows; const color=stage[Math.min(si,stage.length-1)];
+    html+='<div class="grow">';
+    for(let c=0;c<b;c++) html+='<div class="gdot'+(on?'':' off')+'" style="'+(on?'background:'+color:'')+'"></div>';
+    html+='</div>';
+  }
+  return html+'</div>';
+}
+
+/* ---------- App state ---------- */
+const app=document.getElementById('app');
+const S={view:'home',input:'',padActive:false,onSubmit:null,qStart:0,m:null,lesson:null,room:null,confirmReset:false,activeSlot:null,rosterOpen:true};
+try{ if(localStorage.getItem('hero-academy-roster')==='0') S.rosterOpen=false; }catch(e){}
+function go(v){ S.view=v; S.padActive=false; render(); window.scrollTo(0,0); }
+
+function padHTML(){
+  const keys=['1','2','3','4','5','6','7','8','9','DEL','0','GO'];
+  return '<div class="pad">'+keys.map(function(k){
+    const cls=k==='GO'?'go':(k==='DEL'?'del':'');
+    const lab=k==='DEL'?'Delete':(k==='GO'?'Submit answer':k);
+    return '<button type="button" class="'+cls+'" data-act="key" data-arg="'+k+'" aria-label="'+lab+'">'+k+'</button>';
+  }).join('')+'</div>';
+}
+function startInput(onSubmit){ S.input=''; S.padActive=true; S.onSubmit=onSubmit; S.qStart=performance.now(); }
+function padKey(k){
+  if(!S.padActive) return;
+  if(k==='DEL'){ S.input=S.input.slice(0,-1); }
+  else if(k==='GO'){ if(S.input!==''&&S.onSubmit) S.onSubmit(S.input); return; }
+  else if(S.input.length<3){ S.input+=k; }
+  const box=document.getElementById('ans'); if(box) box.textContent=S.input;
+}
+function shakeAns(){ const box=document.getElementById('ans'); if(box){ box.classList.remove('shake'); void box.offsetWidth; box.classList.add('shake'); } }
+
+/* ---------- Views ---------- */
+function topbar(){
+  const p=prog();
+  return '<div class="topbar"><button type="button" class="homelink" data-act="home" title="Back to HQ" aria-label="Hero Academy home">'+
+    (S.view!=='home'?'<span class="homechip">'+ICON_HOME+'HQ</span>':'')+'<span class="display">HERO ACADEMY</span></button>'+
+    '<div class="row" style="gap:12px;align-items:center"><span class="streak">'+ICON_FLAME+'Streak: '+(p.streak.days||0)+' day'+(p.streak.days===1?'':'s')+'</span>'+
+    '<button type="button" class="btn small" data-act="setup">Parent setup</button></div></div>';
+}
+
+function nextMove(){
+  const p=prog(); const cur=currentChapter(); const vn=esc(villainName());
+  if(!cur){
+    return {kicker:'FINAL BATTLE',title:'FACE '+vn.toUpperCase()+'!',body:'All 15 heroes are powered and his shield is down. Use every power you\'ve learned to beat him.',
+      cta:'START FINAL BATTLE',act:'startMission',arg:'',review:false,
+      foot:p.bossWins?('You\'ve beaten him '+p.bossWins+' time'+(p.bossWins===1?'':'s')+'. Battle again anytime!'):'Every multiplication fact is in this battle.'};
+  }
+  const idx=TEAM_ORDER.indexOf(cur)+1; const T=TEAMS[cur]; const n=chapterFacts(cur).length;
+  if(!p.lessons[cur]){
+    const prev=idx>1?TEAM_ORDER[idx-2]:null;
+    return {kicker:'CHAPTER '+idx+' OF 3',
+      title:prev?('CHAPTER '+idx+' UNLOCKED!'):('LEARN '+TEAM_POSS[cur].toUpperCase()+' POWER'),
+      body:prev?('All '+chapterFacts(prev).length+' '+TEAM_PLURAL[prev]+' are powered. Now learn '+TEAM_POSS[cur]+' power: '+T.power.toLowerCase()+'.'):('Chapter '+idx+' starts with a 3-minute lesson: '+T.power.toLowerCase()+'.'),
+      cta:'START TRAINING',act:'lesson',arg:cur,review:false,
+      foot:prev?('Your '+TEAM_PLURAL[prev]+' will still show up in missions for review.'):'Missions open right after training.'};
+  }
+  const pw=poweredCount(cur);
+  return {kicker:'CHAPTER '+idx+' OF 3',title:"TODAY'S MISSION",
+    body:pw+' of '+n+' '+TEAM_PLURAL[cur]+' powered. '+(MISSION_FACTS+WARMUPS)+' questions · about 6 minutes.',
+    cta:'START MISSION',act:'startMission',arg:'',review:true,
+    foot:'Power up all '+n+' to '+(idx<3?'unlock Chapter '+(idx+1):'unlock the final battle')+'.'};
+}
+function ctaAttrs(nm){ return 'data-act="'+nm.act+'"'+(nm.arg?' data-arg="'+nm.arg+'"':''); }
+function chapterThumbs(t){
+  const p=prog();
+  return '<div class="hthumbs sm">'+chapterFacts(t).map(function(f){
+    const r=p.facts[f.k].rank; const on=r>=2;
+    const status=on?('Powered · '+RANKS[r]):(r===1?'Not powered yet':'Locked');
+    const cls=on?'on':(r===1?'off unp':'off lk');
+    return '<div class="ht '+cls+'" title="'+esc(heroName(f))+' ('+f.a+'×'+f.b+'): '+status+'" role="img" aria-label="'+esc(heroName(f))+', '+status+'">'+
+      avatarHTML(f,40)+(on?'<span class="bolt">'+ICON_BOLT+'</span>':'')+'</div>';
+  }).join('')+'</div>';
+}
+function viewHome(){
+  const p=prog(); const cur=currentChapter(); const nm=nextMove(); const vn=esc(villainName());
+  const broken=FACTS.filter(function(f){return p.poweredEver[f.k];}).length;
+  const segs=FACTS.map(function(f,i){return '<div class="seg'+(i<broken?' broken':'')+'"></div>';}).join('');
+  const trained=cur&&p.lessons[cur];
+  const s1=!cur?'done':(trained?'done':'active'), s2=!cur?'done':(trained?'active':'');
+  const s2sub=cur&&trained?('Missions · '+poweredCount(cur)+' of '+chapterFacts(cur).length+' powered'):'Answer facts in missions';
+  const loopText=cur?('Chapter '+(TEAM_ORDER.indexOf(cur)+1)+' of 3'):'All 3 chapters done';
+  const reviewLink=nm.review?'<button type="button" class="linkbtn" data-act="lesson" data-arg="'+cur+'">Review the power</button>':'';
+  const chapters=TEAM_ORDER.map(function(t,i){
+    const T=TEAMS[t]; const n=chapterFacts(t).length; const done=chapterDone(t); const active=t===cur;
+    let cls='chap', chip, chipStyle, status, acts='';
+    if(done){ cls+=' done'; chip='Complete'; chipStyle='background:#15803D;color:#fff'; status='All '+n+' powered · they stay in missions for review'; }
+    else if(active){
+      if(p.lessons[t]){ chip='In progress'; chipStyle='background:#DBEAFE;color:#18181B'; status=poweredCount(t)+' of '+n+' powered · power up all '+n+' to finish'; }
+      else { chip=i===0?'Start here':'Unlocked!'; chipStyle='background:var(--yellow);color:#18181B'; status='Training first, then power up '+n+' heroes'; }
+      acts='<div class="acts"><button type="button" class="btn primary" '+ctaAttrs(nm)+'>'+(p.lessons[t]?'Start mission':'Start training')+'</button>'+
+        (p.lessons[t]?'<button type="button" class="linkbtn" style="text-align:center" data-act="lesson" data-arg="'+t+'">Review the power</button>':'')+'</div>';
+    }
+    else { cls+=' locked'; chip='Locked'; chipStyle='background:#E4E4E7;color:#3F3F46'; status='Unlocks after Chapter '+i; }
+    return '<div class="'+cls+'"><div style="display:flex;justify-content:space-between;align-items:center;gap:6px"><span class="label" style="font-size:11px;letter-spacing:1px">Chapter '+(i+1)+'</span><span class="chip" style="'+chipStyle+'">'+chip+'</span></div>'+
+      '<div style="display:flex;align-items:center;gap:8px"><div class="cbar" style="background:'+T.color+'"></div><strong style="font-size:18px">'+T.name+'</strong></div>'+
+      '<div class="muted" style="font-size:13px">Power: '+T.power.toLowerCase()+'</div>'+chapterThumbs(t)+
+      '<div style="font-size:12px;color:#3F3F46">'+status+'</div>'+acts+'</div>';
+  }).join('');
+  const finalCard=cur
+    ?'<div class="chap locked"><div style="display:flex;justify-content:space-between;align-items:center"><span class="label" style="font-size:11px;letter-spacing:1px">Final battle</span><span class="chip" style="background:#E4E4E7;color:#3F3F46">Locked</span></div>'+
+      '<div style="display:flex;align-items:center;gap:8px"><div class="cbar" style="background:#18181B"></div><strong style="font-size:18px">'+vn+'</strong></div>'+
+      '<div class="muted" style="font-size:13px">Break the last of his shield</div><div class="hthumbs sm"><div class="ht off lk">'+villainAvatar(40)+'</div></div>'+
+      '<div style="font-size:12px;color:#3F3F46">Unlocks after Chapter 3</div></div>'
+    :'<div class="chap"><div style="display:flex;justify-content:space-between;align-items:center"><span class="label" style="font-size:11px;letter-spacing:1px">Final battle</span><span class="chip" style="background:var(--yellow);color:#18181B">Unlocked!</span></div>'+
+      '<div style="display:flex;align-items:center;gap:8px"><div class="cbar" style="background:#18181B"></div><strong style="font-size:18px">'+vn+'</strong></div>'+
+      '<div class="muted" style="font-size:13px">His shield is down</div><div class="hthumbs sm"><div class="ht">'+villainAvatar(40)+'</div></div>'+
+      '<div class="acts"><button type="button" class="btn primary" data-act="startMission">Start final battle</button></div></div>';
+  const store=MODE==='db'?'Progress and pictures save to your private copy of this page.':(MODE==='local'?'Progress saves in this browser only.':'Progress will not be saved after you close this page.');
+  return topbar()+
+  '<div class="hero2">'+
+    '<div class="panel col" style="gap:14px">'+
+      '<div class="label" style="color:#B91C1C">Villain alert</div>'+
+      '<div class="vrow">'+villainAvatar(116)+
+        '<div class="col" style="gap:8px"><div class="vhead">'+vn.toUpperCase()+' IS ATTACKING '+esc(placeName()).toUpperCase()+'!</div>'+
+        '<div style="font-size:15px;line-height:1.4">His force shield is made of <strong>15 multiplication facts</strong>. Every fact you master powers up a hero and cracks the shield.</div></div></div>'+
+      '<div class="col" style="gap:6px"><div style="display:flex;justify-content:space-between;font-size:13px;font-weight:800;gap:8px"><span>'+vn+'\'s shield</span><span>'+(15-broken)+' of 15 facts still protecting him</span></div>'+
+        '<div class="shield" role="img" aria-label="'+broken+' of 15 shield pieces broken">'+segs+'</div></div>'+
+    '</div>'+
+    '<div class="nextcard">'+
+      '<div class="label" style="color:#18181B">Your next move · '+nm.kicker+'</div>'+
+      '<div class="display" style="font-size:34px;line-height:1">'+nm.title+'</div>'+
+      '<div style="font-size:15px;line-height:1.4">'+nm.body+'</div>'+
+      '<button type="button" class="btn primary big" '+ctaAttrs(nm)+'>'+nm.cta+'</button>'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;flex-wrap:wrap"><span style="color:#3F3F46">'+nm.foot+'</span>'+reviewLink+'</div>'+
+    '</div>'+
+  '</div>'+
+  '<div class="howto"><div class="label" style="font-size:12px">How to win</div>'+
+    '<div class="loopbox"><div class="loophead"><span>REPEAT FOR EACH CHAPTER</span><span>'+loopText+'</span></div><div class="loopsteps">'+
+      '<div class="step '+s1+'"><span class="stepnum">1</span><span><strong>Learn the chapter\'s power</strong><br>Training comes first</span></div>'+
+      '<div class="step '+s2+'"><span class="stepnum">2</span><span><strong>Power up its heroes</strong><br>'+s2sub+'</span></div>'+
+    '</div></div>'+
+    '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3F3F46" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>'+
+    '<div class="step finalstep '+(cur?'':'active')+'"><span class="stepnum">3</span><span><strong>Final battle</strong><br>After all 3 chapters</span></div>'+
+  '</div>'+
+  '<div class="pathhead"><div class="display" style="font-size:28px">THE PATH TO '+vn.toUpperCase()+'</div><button type="button" class="linkbtn" data-act="collection">See all 15 heroes</button></div>'+
+  '<div class="path">'+chapters+finalCard+'</div>'+
+  '<p class="muted" style="font-size:13px;margin-top:16px">'+store+'</p>';
+}
+
+function viewAcademy(){
+  const p=prog();
+  return topbar()+'<div class="display" style="font-size:38px;margin-bottom:12px">TRAINING ACADEMY</div>'+
+  '<div class="row">'+TEAM_ORDER.map(function(t,i){
+    const exs=TEAMS[t].lessons; const done=p.lessons[t];
+    return '<div class="panel col" style="flex:1 1 280px">'+
+      '<div class="label">Lesson '+(i+1)+(done?' · complete':'')+'</div>'+
+      '<div class="display" style="font-size:30px">'+TEAMS[t].name+'</div>'+
+      '<div>Power: <strong>'+TEAMS[t].power+'</strong></div>'+
+      '<div class="muted" style="font-size:14px">'+(exs.length>1?'Examples: ':'Example: ')+exs.map(function(e){return e.a+' × '+e.b;}).join(' and ')+'</div>'+
+      '<button type="button" class="btn '+(done?'':'yellow')+'" data-act="lesson" data-arg="'+t+'">'+(done?'Practice again':'Start lesson')+'</button></div>';
+  }).join('')+'</div>';
+}
+
+function viewLesson(){
+  const L=S.lesson; const t=TEAMS[L.team];
+  if(L.phase==='demo'){
+    const ex=t.lessons[L.ex||0]; const a=ex.a,b=ex.b; const steps=strategySteps(a,b,L.team); const cur=steps[L.step];
+    const lastStep=L.step===steps.length-1; const lastEx=(L.ex||0)===t.lessons.length-1; const last=lastStep&&lastEx;
+    return topbar()+'<div class="label">Training Academy</div><div class="display" style="font-size:38px;margin:4px 0 14px">'+esc(t.name).toUpperCase()+' POWER: '+esc(t.power).toUpperCase()+'</div>'+
+    '<div class="row"><div class="panel" style="flex:0 1 auto">'+gridHTML(a,b,L.team,cur.rows)+'</div>'+
+    '<div class="panel col" style="flex:1 1 300px">'+(t.lessons.length>1?'<div class="label">Example '+((L.ex||0)+1)+' of '+t.lessons.length+'</div>':'')+'<div class="display" style="font-size:44px">'+a+' × '+b+'</div>'+
+    (ex.note?'<div class="note">'+esc(ex.note)+'</div>':'')+
+    '<ol class="steps">'+steps.slice(0,L.step+1).map(function(s,i){return '<li class="'+(i===L.step?'now':'')+'">'+s.text+'</li>';}).join('')+'</ol>'+
+    (L.team==='P'?'<div class="note">Same power for 7s: 7 × 7 is 5 sevens (35) + 2 more sevens (14) = 49.</div>':'')+
+    '<button type="button" class="btn '+(last?'primary':'yellow')+' big" data-act="lessonNext">'+(last?'YOUR TURN!':(lastStep?'NEXT EXAMPLE':'NEXT'))+'</button></div></div>';
+  }
+  if(L.phase==='practice'){
+    const a=t.practice.a,b=t.practice.b;
+    return topbar()+'<div class="label">Your turn · use the '+esc(t.name)+' power</div>'+
+    '<div class="row" style="margin-top:12px;align-items:flex-start">'+
+      '<div class="panel col" style="flex:1 1 380px;align-items:center;justify-content:center;min-height:260px">'+
+        '<div class="question">'+a+' × '+b+' = <span class="ansbox" id="ans" aria-live="polite"></span></div>'+
+        (L.miss?'<div class="col" style="align-items:center">'+gridHTML(a,b,L.team,a)+'<ol class="steps">'+strategySteps(a,b,L.team).map(function(s){return '<li>'+s.text+'</li>';}).join('')+'</ol></div>':'<div class="muted">Hint: '+esc(strategySteps(a,b,L.team)[0].text)+'</div>')+
+      '</div>'+padHTML()+'</div>';
+  }
+  const fs=FACTS.filter(function(f){return f.team===L.team;});
+  return topbar()+'<div class="panel col" style="align-items:center;text-align:center">'+
+    '<div class="display" style="font-size:48px">'+(L.wasReview?'POWER REVIEWED!':'POWER UNLOCKED!')+'</div>'+
+    '<div>'+(L.wasReview?('Nice refresher. Now put '+esc(TEAM_POSS[L.team])+' power to work.'):(fs.length+' heroes joined '+esc(t.name)+'. They\'ll show up in your missions.'))+'</div>'+
+    '<div class="row" style="justify-content:center">'+fs.map(function(f){return '<div class="col" style="align-items:center;gap:4px">'+avatarHTML(f,84)+'<strong>'+f.a+'×'+f.b+'</strong></div>';}).join('')+'</div>'+
+    '<div class="row" style="justify-content:center"><button type="button" class="btn primary big" data-act="startMission">START A MISSION</button><button type="button" class="btn" data-act="home">Back to HQ</button></div></div>';
+}
+
+function viewMission(){
+  const m=S.m; const it=m.items[m.idx]; const p=prog();
+  const hp=Math.max(0,100-Math.round(m.hits/m.target*100));
+  const dots=m.items.map(function(x,i){return '<div class="dot" style="background:'+(i<m.idx?'#FACC15':(i===m.idx?'#1D4ED8':'#fff'))+'"></div>';}).join('');
+  let card;
+  if(it.type==='fact'){
+    const f=factByKey(it.k);
+    card='<div class="panel col" style="width:230px;align-items:center;text-align:center">'+avatarHTML(f,190)+
+      '<div class="display" style="font-size:26px;line-height:1">'+esc(heroName(f))+'</div>'+
+      '<div class="muted" style="font-size:13px">'+TEAMS[f.team].name+'</div>'+rankPill(p.facts[f.k].rank)+'</div>';
+  }else{
+    card='<div class="panel col" style="width:230px;align-items:center;justify-content:center;text-align:center;background:#FEF9C3"><div class="display" style="font-size:34px">WARM-UP</div><div class="muted">A fact you already know. Easy points!</div></div>';
+  }
+  const x=it.flip?it.b:it.a, y=it.flip?it.a:it.b;
+  return '<div class="row" style="align-items:center;margin-bottom:16px">'+villainAvatar(64)+
+    '<div class="col" style="flex:1 1 300px;gap:6px"><div style="display:flex;justify-content:space-between;font-weight:800;font-size:14px"><span>'+esc(villainName())+'</span><span>HP '+hp+'%</span></div><div class="hp"><div style="width:'+hp+'%"></div></div></div>'+
+    '<div class="dots" aria-label="Question '+(m.idx+1)+' of '+m.items.length+'">'+dots+'</div>'+
+    '<button type="button" class="btn small" data-act="quit">Quit</button></div>'+
+  '<div class="row" style="align-items:stretch">'+card+
+    '<div class="panel col" style="flex:1 1 360px;align-items:center;justify-content:center">'+
+      '<div class="label">Question '+(m.idx+1)+' of '+m.items.length+'</div>'+
+      '<div class="question">'+x+' × '+y+' = <span class="ansbox" id="ans" aria-live="polite"></span></div></div>'+
+    padHTML()+'</div>'+rosterHTML();
+}
+
+const ICON_CHECK='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>';
+const ICON_X='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+function rosterHTML(){
+  const m=S.m; const open=S.rosterOpen!==false;
+  const nRight=m.items.filter(function(x){return x.result==='right';}).length;
+  const nWrong=m.items.filter(function(x){return x.result==='wrong';}).length;
+  const left=m.items.length-m.idx;
+  const head='<div class="roster-head"><div class="row" style="gap:10px;align-items:center">'+
+    '<strong>This mission\'s heroes</strong>'+
+    '<span class="sumchip" style="color:#15803D">'+ICON_CHECK+' '+nRight+' correct</span>'+
+    '<span class="sumchip" style="color:#B91C1C">'+ICON_X+' '+nWrong+' missed</span>'+
+    '<span class="sumchip" style="color:#3F3F46">'+left+' to go</span></div>'+
+    '<button type="button" class="btn small" data-act="toggleRoster" aria-expanded="'+open+'" aria-controls="rstrip">'+(open?'Minimize':'Show heroes')+'</button></div>';
+  if(!open) return '<section class="panel roster" aria-label="Mission heroes">'+head+'</section>';
+  const cells=m.items.map(function(it,i){
+    const x=it.flip?it.b:it.a, y=it.flip?it.a:it.b;
+    const thumb=it.type==='fact'?avatarHTML(factByKey(it.k),64):'<div class="avatar" style="width:64px;height:64px;background:#FEF9C3"><span class="display" style="font-size:16px">WARM-UP</span></div>';
+    const name=it.type==='fact'?esc(heroName(factByKey(it.k))):'Warm-up';
+    let state, body;
+    if(it.result==='right'){ state='right'; body='<span class="rbadge right">'+ICON_CHECK+'Correct</span><span class="rformula">'+x+' × '+y+' = '+(it.a*it.b)+'</span>'; }
+    else if(it.result==='wrong'){ state='wrong'; body='<span class="rbadge wrong">'+ICON_X+'Missed</span><span class="rformula">'+x+' × '+y+' = '+(it.a*it.b)+'</span><span class="rgiven">You said '+esc(it.given)+'</span>'; }
+    else if(i===m.idx){ state='now'; body='<span class="rbadge now">Now</span><span class="rformula ask">'+x+' × '+y+' = ?</span>'; }
+    else { state='todo'; body='<span class="rbadge todo">Coming up</span><span class="rformula ask">'+x+' × '+y+' = ?</span>'; }
+    const tc=it.type==='fact'?TEAMS[it.team].color:'#A16207';
+    const tn=it.type==='fact'?TEAM_SHORT[it.team]:'Warm-up';
+    return '<div class="rcell '+state+'"><span class="rstripe" style="background:'+tc+'"></span>'+thumb+
+      '<span class="tchip" style="background:'+tc+'">'+tn+'</span>'+
+      '<span style="font-size:12px;font-weight:600;line-height:1.2">'+name+(it.requeued?' <span class="muted">(again)</span>':'')+(it.review&&!it.requeued?' <span class="muted">(review)</span>':'')+'</span>'+body+'</div>';
+  }).join('');
+  return '<section class="panel roster" aria-label="Mission heroes">'+head+'<div class="rstrip" id="rstrip">'+cells+'</div></section>';
+}
+
+function viewRoom(){
+  const it=S.room.it; const team=it.type==='fact'?it.team:'W';
+  const steps=strategySteps(it.a,it.b,team);
+  return '<div class="panel" style="background:var(--yellow);margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">'+
+    '<div class="display" style="font-size:36px">TRAINING ROOM: POWER UP '+it.a+' × '+it.b+'</div>'+
+    '<div style="font-weight:600">'+(it.type==='fact'?TEAMS[it.team].name+' power':'Warm-up')+'</div></div>'+
+  '<div class="row" style="align-items:flex-start">'+
+    '<div class="panel col" style="flex:1 1 380px">'+gridHTML(it.a,it.b,team,it.a)+
+      '<ol class="steps">'+steps.map(function(s){return '<li>'+s.text+'</li>';}).join('')+'</ol></div>'+
+    '<div class="panel col" style="flex:0 1 320px">'+
+      '<strong>Now you type it</strong>'+
+      '<div class="question" style="font-size:52px">'+it.a+' × '+it.b+' = <span class="ansbox" id="ans" aria-live="polite"></span></div>'+
+      padHTML()+
+      '<div class="muted" style="font-size:13px">'+(it.type==='fact'?'This hero comes back later in this mission.':'You\'ve got this one.')+'</div></div></div>';
+}
+
+function viewDebrief(){
+  const m=S.m; const ups=m.changes;
+  const list=ups.length?ups.map(function(c){
+    const f=factByKey(c.k); const up=c.to>c.from; const same=c.to===c.from;
+    return '<div class="card">'+avatarHTML(f,100)+'<div class="display" style="font-size:24px">'+f.a+' × '+f.b+'</div>'+
+      '<div style="font-size:13px;font-weight:800">'+(same?'Held at '+RANKS[c.to]:(up?RANKS[c.from]+' → '+RANKS[c.to]:'Needs more training'))+'</div></div>';
+  }).join(''):'<p class="muted">Warm-ups only this time.</p>';
+  const p=prog(); const tomorrow=startOfDay(Date.now())+DAY;
+  const dueSoon=FACTS.filter(function(f){return p.facts[f.k].rank>0&&p.facts[f.k].due<=tomorrow;}).length;
+  let banner='';
+  if(m.chapterCompleted){
+    const t=m.chapterCompleted; const i=TEAM_ORDER.indexOf(t); const nxt=TEAM_ORDER[i+1];
+    banner='<div class="banner"><div class="display" style="font-size:40px;line-height:1">CHAPTER '+(i+1)+' COMPLETE!</div>'+
+      '<div style="font-size:16px;margin-top:6px">All '+chapterFacts(t).length+' '+TEAM_PLURAL[t]+' are powered. '+
+      (nxt?('<strong>Chapter '+(i+2)+': '+TEAMS[nxt].name+'</strong> is unlocked. Start its training from HQ.'):('<strong>The final battle</strong> is unlocked. Head to HQ to face '+esc(villainName())+'!'))+'</div></div>';
+  }
+  const title=m.boss?('YOU DEFEATED '+esc(villainName()).toUpperCase()+'!'):('MISSION COMPLETE! '+esc(villainName()).toUpperCase()+' RETREATS!');
+  return topbar()+banner+'<div class="row" style="justify-content:space-between;align-items:center;margin-bottom:14px">'+
+    '<div class="display" style="font-size:46px">'+title+'</div>'+
+    '<span class="pill">'+m.firstTry+' of '+m.target+' right on the first try</span></div>'+
+  '<div class="panel col"><div class="label">Your heroes after this mission</div><div class="cards">'+list+'</div></div>'+
+  '<div class="row" style="margin-top:16px;align-items:center">'+
+    '<button type="button" class="btn primary big" data-act="home">DONE FOR TODAY</button>'+
+    '<button type="button" class="btn" data-act="collection">See my heroes</button>'+
+    '<span class="muted">Come back tomorrow: '+dueSoon+' hero'+(dueSoon===1?'':'es')+' will need training.</span></div>';
+}
+
+function viewCollection(){
+  const p=prog();
+  const n=FACTS.filter(function(f){return p.facts[f.k].rank>0;}).length;
+  return topbar()+'<div class="display" style="font-size:38px;margin-bottom:12px">MY HEROES · '+n+' OF 15</div>'+
+  TEAM_ORDER.map(function(t){
+    const fs=FACTS.filter(function(f){return f.team===t;});
+    return '<div class="panel col" style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px"><strong style="font-size:18px">'+TEAMS[t].name+'</strong><span class="muted">Power: '+TEAMS[t].power+'</span></div><div class="cards">'+
+      fs.map(function(f){
+        const r=p.facts[f.k].rank; const md=median(p.facts[f.k].times);
+        if(r===0) return '<div class="card locked"><div class="lockwrap">'+avatarHTML(f,110)+'<span class="lockbadge">'+ICON_LOCK+'</span></div>'+
+          '<div style="font-weight:800;font-size:14px">'+esc(heroName(f))+'</div><div class="display" style="font-size:22px">'+f.a+' × '+f.b+'</div>'+
+          '<span style="font-size:12px;color:#3F3F46">Locked · finish the '+TEAM_SHORT[t]+' lesson</span></div>';
+        return '<div class="card" style="background:'+RANK_BG[r]+'">'+avatarHTML(f,110)+'<div style="font-weight:800;font-size:14px">'+esc(heroName(f))+'</div><div class="display" style="font-size:22px">'+f.a+' × '+f.b+'</div>'+rankPill(r)+(md?'<span style="font-size:12px">'+(md/1000).toFixed(1)+' s typical</span>':'')+'</div>';
+      }).join('')+'</div></div>';
+  }).join('');
+}
+
+function slotHTML(id,label,sub,avatar){
+  const own=DATA[id]||{}, sh=SHARED[id]||{}; const hasImg=!!safeImg(own.img);
+  return '<div class="slot'+(S.activeSlot===id?' active':'')+'" data-slot="'+id+'" tabindex="0" aria-label="'+label+' picture slot. Drop a picture here, or select it and paste.">'+avatar+
+    '<div class="col" style="flex:1 1 220px;gap:6px"><div><strong>'+label+'</strong> <span class="muted" style="font-size:13px">'+sub+'</span></div>'+
+    '<div class="hint">Drag a picture here, or click this box and paste (Ctrl+V / ⌘V)</div>'+
+    '<label style="display:block"><span class="sr" style="position:absolute;left:-9999px">Name for '+label+'</span><input type="text" maxlength="40" placeholder="'+esc(sh.name||'Name')+'" value="'+esc(own.name||'')+'" data-name="'+id+'"></label></div>'+
+    '<div class="row" style="gap:8px"><label class="filebtn">'+(hasImg?'Change picture':'Add picture')+'<input type="file" accept="image/*" data-file="'+id+'" aria-label="Picture for '+label+'"></label>'+
+    (hasImg?'<button type="button" class="btn small" data-act="clearImg" data-arg="'+id+'">Remove</button>':'')+'</div></div>';
+}
+function sharePanelHTML(){
+  if(!DB) return '';
+  const meta=SHARED.meta;
+  if(!IS_OWNER){
+    return meta?'<div class="note" style="margin-bottom:14px">You\'re seeing the heroes the game\'s owner set up. Anything you add here replaces theirs on your account only.</div>':'';
+  }
+  const status=meta?('Shared '+new Date(meta.at).toLocaleString()+'. Press again after you change pictures or names.'):'Not shared yet. Right now, other people see blank heroes.';
+  return '<div class="panel col" style="margin-bottom:14px;border-color:#1D4ED8"><strong style="font-size:18px">Share this setup</strong>'+
+    '<div>Lets everyone you\'ve shared this game with see your heroes, villain and school name. Their progress stays separate from your child\'s.</div>'+
+    '<div class="note"><strong>Check first:</strong> anyone who can open this page will see these pictures. Use Share at the top of the page to limit it to specific people before you share your setup.</div>'+
+    '<div class="muted" style="font-size:13px">'+status+'</div>'+
+    '<div class="row" style="gap:8px"><button type="button" class="btn primary" data-act="shareSetup"'+(S.sharing?' disabled':'')+'>'+(S.sharing?'Sharing…':(meta?'Update shared setup':'Share my setup'))+'</button>'+
+    (meta?'<button type="button" class="btn" data-act="unshareSetup"'+(S.sharing?' disabled':'')+'>Stop sharing</button>':'')+'</div></div>';
+}
+function viewSetup(){
+  const p=prog(); const ownPlace=(DATA.settings||{}).name||'';
+  const store=MODE==='db'?'Pictures and names save to your private copy of this page, so they show up on your other devices too.':(MODE==='local'?'Pictures and names save in this browser only.':'Saving isn\'t available here, so pictures and names last until you close the page.');
+  let html=topbar()+'<div class="display" style="font-size:38px">PARENT SETUP</div>'+
+    '<p>Add a picture and a name for each hero and the villain. Any picture works: drawings, photos or toys. Pictures are shrunk to save space. '+store+'</p>'+
+    sharePanelHTML()+
+    '<div class="note" style="margin-bottom:14px"><strong>Three ways to add a picture:</strong> drag it from another browser window onto a box · right-click it, choose "Copy Image", click a box and paste (Ctrl+V / ⌘V) · or use "Add picture" to pick a saved file. Square pictures work best.</div>'+
+    '<div class="panel col" style="margin-bottom:14px"><strong style="font-size:18px">The villain</strong>'+
+    slotHTML('villain','Villain','shows up on every mission',villainAvatar(72))+
+    '<label class="col" style="gap:4px"><strong>Place under attack</strong><input type="text" maxlength="40" placeholder="'+esc((SHARED.settings||{}).name||'your school')+'" value="'+esc(ownPlace)+'" data-name="settings"></label></div>';
+  TEAM_ORDER.forEach(function(t){
+    html+='<div class="panel col" style="margin-bottom:14px"><strong style="font-size:18px">'+TEAMS[t].name+'</strong><span class="muted" style="font-size:13px">Power: '+TEAMS[t].power+'</span>'+
+      FACTS.filter(function(f){return f.team===t;}).map(function(f){
+        return slotHTML('hero-'+f.k,f.a+' × '+f.b,'hero',avatarHTML(f,72));
+      }).join('')+'</div>';
+  });
+  html+='<div class="panel col"><strong style="font-size:18px">Progress</strong><div style="overflow-x:auto"><table><thead><tr><th>Fact</th><th>Rank</th><th>Typical time</th><th>Next due</th></tr></thead><tbody>'+
+    FACTS.map(function(f){ const s=p.facts[f.k]; const md=median(s.times);
+      const due=s.rank===0?'—':(s.due<=Date.now()?'now':new Date(s.due).toLocaleDateString());
+      return '<tr><td>'+f.a+' × '+f.b+'</td><td>'+RANKS[s.rank]+'</td><td>'+(md?(md/1000).toFixed(1)+' s':'—')+'</td><td>'+due+'</td></tr>'; }).join('')+
+    '</tbody></table></div><p class="muted" style="font-size:13px">Missions finished: '+(p.missions||0)+'. Gold needs a right answer in under 3 seconds.</p>'+
+    (S.confirmReset?'<div class="note row" style="align-items:center">Reset all progress? Pictures and names stay. <button type="button" class="btn small" data-act="doReset">Yes, reset</button><button type="button" class="btn small" data-act="cancelReset">Cancel</button></div>'
+      :'<div><button type="button" class="btn small" data-act="askReset">Reset progress</button></div>')+'</div>';
+  return html;
+}
+
+function render(){
+  const V={home:viewHome,academy:viewAcademy,lesson:viewLesson,mission:viewMission,room:viewRoom,debrief:viewDebrief,collection:viewCollection,setup:viewSetup};
+  app.innerHTML=V[S.view]();
+  const box=document.getElementById('ans'); if(box&&S.padActive) box.textContent=S.input;
+  const strip=document.getElementById('rstrip');
+  if(strip&&S.view==='mission'){ const cur=strip.children[S.m.idx]; if(cur) strip.scrollLeft=Math.max(0,cur.offsetLeft-strip.offsetLeft-130); }
+}
+
+/* ---------- Game logic ---------- */
+function applyResult(k,correct,ms){
+  const p=prog(); const s=p.facts[k]; const from=s.rank; let to;
+  if(correct){ s.times=(s.times||[]).concat([Math.round(ms)]).slice(-6); to=(from>=3&&ms>=FAST_MS)?from:Math.min(5,from+1); }
+  else{ to=Math.max(1,from-1); }
+  s.rank=to;
+  if(to>=2) p.poweredEver[k]=true;
+  s.due=(!correct||to<=1)?Date.now():startOfDay(Date.now())+INTERVAL_DAYS[to]*DAY;
+  S.m.changes.push({k:k,from:from,to:to});
+}
+function buildMission(){
+  const p=prog(); const now=Date.now(); const cur=currentChapter(); const boss=!cur;
+  const byNeed=function(x,y){return p.facts[x.k].rank-p.facts[y.k].rank||p.facts[x.k].due-p.facts[y.k].due;};
+  let main, review=[];
+  if(boss){ main=FACTS.slice(); }
+  else{
+    if(!p.lessons[cur]) return null;
+    main=chapterFacts(cur).filter(function(f){return p.facts[f.k].rank>0;});
+    const doneTeams=TEAM_ORDER.slice(0,TEAM_ORDER.indexOf(cur));
+    review=FACTS.filter(function(f){return doneTeams.indexOf(f.team)>=0&&p.facts[f.k].rank>0&&p.facts[f.k].due<=now;})
+      .sort(function(x,y){return p.facts[x.k].due-p.facts[y.k].due;}).slice(0,REVIEW_SLOTS);
+  }
+  if(!main.length) return null;
+  const n=MISSION_FACTS-review.length;
+  const due=main.filter(function(f){return p.facts[f.k].due<=now;}).sort(byNeed);
+  const later=main.filter(function(f){return p.facts[f.k].due>now;}).sort(byNeed);
+  const picks=due.concat(later).slice(0,n);
+  let i=0; const pool=main.slice().sort(byNeed);
+  while(picks.length<n){ picks.push(pool[i%pool.length]); i++; }
+  const items=picks.map(function(f){return {type:'fact',k:f.k,a:f.a,b:f.b,team:f.team,flip:Math.random()<0.5};})
+    .concat(review.map(function(f){return {type:'fact',k:f.k,a:f.a,b:f.b,team:f.team,flip:Math.random()<0.5,review:true};}));
+  const known=[5,9,10,11]; const usedW={};
+  for(let w=0;w<WARMUPS;w++){
+    let a,b,key; do{ a=known[Math.floor(Math.random()*known.length)]; b=2+Math.floor(Math.random()*8); key=a+'x'+b; }while(usedW[key]); usedW[key]=1;
+    items.push({type:'warm',k:'w'+key,a:a,b:b,team:'W',flip:Math.random()<0.5});
+  }
+  for(let t=0;t<60;t++){ shuffle(items); let ok=true; for(let j=1;j<items.length;j++){ if(items[j].k===items[j-1].k){ok=false;break;} } if(ok) break; }
+  return {items:items,idx:0,hits:0,target:items.length,firstTry:0,seen:{},changes:[],boss:boss,chapter:cur,startDone:cur?chapterDone(cur):false};
+}
+function showQuestion(){ go('mission'); startInput(submitMission); }
+function flash(html,ms,then){
+  const el=document.createElement('div'); el.className='flash'; el.innerHTML='<div>'+html+'</div>'; document.body.appendChild(el);
+  S.padActive=false; setTimeout(function(){ el.remove(); then(); },ms);
+}
+function submitMission(val){
+  const m=S.m; const it=m.items[m.idx]; const ms=performance.now()-S.qStart;
+  const right=parseInt(val,10)===it.a*it.b;
+  const first=it.type==='fact'&&!m.seen[it.k];
+  if(right){
+    it.result='right';
+    m.hits=Math.min(m.target,m.hits+1);
+    if(!it.requeued) m.firstTry++;
+    if(first){ m.seen[it.k]=1; applyResult(it.k,true,ms); }
+    const pic=it.type==='fact'?avatarHTML(factByKey(it.k),90):'';
+    flash(pic+'<span class="display" style="font-size:64px">POW!</span>',750,nextQuestion);
+  }else{
+    if(first){ m.seen[it.k]=1; applyResult(it.k,false,ms); }
+    if(!it.requeued){ const copy=Object.assign({},it,{requeued:true}); delete copy.result; delete copy.given; m.items.splice(Math.min(m.idx+3,m.items.length),0,copy); }
+    it.result='wrong'; it.given=val;
+    S.room={it:it}; go('room'); startInput(submitRoom);
+  }
+}
+function submitRoom(val){
+  const it=S.room.it;
+  if(parseInt(val,10)===it.a*it.b){ flash('<span class="display" style="font-size:52px">POWERED UP!</span>',700,nextQuestion); }
+  else{ S.input=''; const b=document.getElementById('ans'); if(b) b.textContent=''; shakeAns(); toast('Count the dots in each step, then try again.'); }
+}
+function nextQuestion(){
+  const m=S.m; m.idx++;
+  if(m.idx>=m.items.length) return finishMission();
+  showQuestion();
+}
+function finishMission(){
+  const p=prog(); const today=dayKey(Date.now()); const yest=dayKey(Date.now()-DAY);
+  if(p.streak.last!==today){ p.streak.days=(p.streak.last===yest)?(p.streak.days||0)+1:1; p.streak.last=today; }
+  p.missions=(p.missions||0)+1;
+  const m=S.m;
+  if(m.boss){ p.bossWins=(p.bossWins||0)+1; }
+  else if(m.chapter&&!m.startDone&&chapterDone(m.chapter)){ m.chapterCompleted=m.chapter; }
+  put('progress',p); go('debrief');
+}
+function submitPractice(val){
+  const L=S.lesson; const t=TEAMS[L.team];
+  if(parseInt(val,10)===t.practice.a*t.practice.b){
+    const p=prog(); L.wasReview=!!p.lessons[L.team]; p.lessons[L.team]=true;
+    FACTS.forEach(function(f){ if(f.team===L.team&&p.facts[f.k].rank===0){ p.facts[f.k].rank=1; p.facts[f.k].due=Date.now(); } });
+    put('progress',p); L.phase='done'; go('lesson');
+  }else{
+    L.miss=true; go('lesson'); startInput(submitPractice); shakeAns();
+  }
+}
+
+/* ---------- Sharing the owner's setup ---------- */
+function setupIds(){ return ['villain','settings'].concat(FACTS.map(function(f){return 'hero-'+f.k;})); }
+async function shareSetup(){
+  if(!DB||!IS_OWNER||S.sharing) return;
+  S.sharing=true; render();
+  try{
+    const sc=DB.collection('shared');
+    for(const id of setupIds()){
+      const own=DATA[id];
+      if(own&&(own.name||own.img)){ const body={}; if(own.name) body.name=own.name; if(safeImg(own.img)) body.img=own.img; await sc.doc(id).set(body); SHARED[id]=body; }
+      else if(SHARED[id]){ await sc.doc(id).delete(); delete SHARED[id]; }
+    }
+    const meta={at:Date.now()}; await sc.doc('meta').set(meta); SHARED.meta=meta;
+    toast('Shared! People you\'ve shared the game with will see your heroes next time they open it.');
+  }catch(e){ toast(e&&e.code==='quota_exceeded'?'Storage is full. Try smaller pictures.':"Couldn't share the setup. Try again."); }
+  S.sharing=false; render();
+}
+async function unshareSetup(){
+  if(!DB||!IS_OWNER||S.sharing) return;
+  S.sharing=true; render();
+  try{
+    const sc=DB.collection('shared');
+    for(const id of setupIds().concat(['meta'])){ if(SHARED[id]){ await sc.doc(id).delete(); delete SHARED[id]; } }
+    toast('Stopped sharing. Others will see blank heroes again.');
+  }catch(e){ toast("Couldn't stop sharing. Try again."); }
+  S.sharing=false; render();
+}
+
+/* ---------- Pictures ---------- */
+function fileToDataUrl(file){ return srcToDataUrl(URL.createObjectURL(file)); }
+function saveImage(id,promise){
+  promise.then(function(url){ const cur=Object.assign({},DATA[id]||{}); cur.img=url; put(id,cur); S.activeSlot=id; render(); toast('Picture added.'); })
+    .catch(function(){ toast('That could not be read as a picture.'); });
+}
+function imageFileFrom(list){
+  if(!list) return null;
+  for(let i=0;i<list.length;i++){
+    const it=list[i];
+    if(it.kind==='file'&&it.type&&it.type.indexOf('image/')===0){ return it.getAsFile(); }
+    if(it instanceof File&&it.type.indexOf('image/')===0){ return it; }
+  }
+  return null;
+}
+function srcToDataUrl(url){
+  return new Promise(function(res,rej){
+    const img=new Image();
+    img.onload=function(){
+      const max=320; const s=Math.min(1,max/Math.max(img.width,img.height));
+      const w=Math.max(1,Math.round(img.width*s)), h=Math.max(1,Math.round(img.height*s));
+      const c=document.createElement('canvas'); c.width=w; c.height=h; const ctx=c.getContext('2d');
+      ctx.fillStyle='#fff'; ctx.fillRect(0,0,w,h); ctx.drawImage(img,0,0,w,h);
+      URL.revokeObjectURL(url); res(c.toDataURL('image/jpeg',0.82));
+    };
+    img.onerror=function(){ URL.revokeObjectURL(url); rej(new Error('bad image')); };
+    img.src=url;
+  });
+}
+
+/* ---------- Events ---------- */
+const ACT={
+  home:function(){go('home');},
+  setup:function(){S.confirmReset=false;go('setup');},
+  academy:function(){go('home');},
+  collection:function(){go('collection');},
+  lesson:function(t){S.lesson={team:t,ex:0,step:0,phase:'demo',miss:false};go('lesson');},
+  lessonNext:function(){
+    const L=S.lesson; const t=TEAMS[L.team]; const ex=t.lessons[L.ex]; const n=strategySteps(ex.a,ex.b,L.team).length;
+    if(L.step<n-1){L.step++;go('lesson');}
+    else if(L.ex<t.lessons.length-1){L.ex++;L.step=0;go('lesson');}
+    else {L.phase='practice';go('lesson');startInput(submitPractice);}
+  },
+  startMission:function(){ const m=buildMission(); if(!m){toast('Finish this chapter\'s training first.');return;} S.m=m; showQuestion(); },
+  quit:function(){ if(S.m&&S.m.changes.length) put('progress',prog()); go('home'); },
+  key:function(k){padKey(k);},
+  shareSetup:function(){ shareSetup(); },
+  unshareSetup:function(){ unshareSetup(); },
+  toggleRoster:function(){
+    S.rosterOpen=S.rosterOpen===false;
+    try{ localStorage.setItem('hero-academy-roster',S.rosterOpen?'1':'0'); }catch(e){}
+    render();
+    S.qStart=performance.now(); /* restart the clock so opening/closing doesn't count against answer speed */
+  },
+  clearImg:function(id){ const cur=Object.assign({},DATA[id]||{}); delete cur.img; put(id,cur); render(); },
+  askReset:function(){S.confirmReset=true;render();},
+  cancelReset:function(){S.confirmReset=false;render();},
+  doReset:function(){ delete DATA.progress; put('progress',prog()); S.confirmReset=false; toast('Progress reset.'); render(); }
+};
+app.addEventListener('click',function(e){
+  const b=e.target.closest('[data-act]'); if(!b||b.disabled) return;
+  const fn=ACT[b.dataset.act]; if(fn) fn(b.dataset.arg,b);
+});
+app.addEventListener('change',function(e){
+  const el=e.target;
+  if(el.dataset.file){
+    const id=el.dataset.file; const f=el.files&&el.files[0]; if(!f) return;
+    saveImage(id,fileToDataUrl(f));
+  }else if(el.dataset.name){
+    const id=el.dataset.name; const cur=Object.assign({},DATA[id]||{}); const v=el.value.trim().slice(0,40);
+    if(cur.name===v) return; cur.name=v; put(id,cur);
+  }
+});
+/* Drag-and-drop and paste for picture slots */
+function setActiveSlot(id){
+  S.activeSlot=id;
+  app.querySelectorAll('.slot').forEach(function(s){ s.classList.toggle('active',s.dataset.slot===id); });
+}
+app.addEventListener('focusin',function(e){ const s=e.target.closest&&e.target.closest('[data-slot]'); if(s) setActiveSlot(s.dataset.slot); });
+app.addEventListener('mousedown',function(e){ const s=e.target.closest('[data-slot]'); if(s) setActiveSlot(s.dataset.slot); });
+app.addEventListener('dragover',function(e){
+  const s=e.target.closest('[data-slot]'); if(!s) return;
+  e.preventDefault(); if(e.dataTransfer) e.dataTransfer.dropEffect='copy';
+  app.querySelectorAll('.slot.drag').forEach(function(x){ if(x!==s) x.classList.remove('drag'); });
+  s.classList.add('drag');
+});
+app.addEventListener('dragleave',function(e){
+  const s=e.target.closest('[data-slot]'); if(s&&!s.contains(e.relatedTarget)) s.classList.remove('drag');
+});
+app.addEventListener('drop',function(e){
+  const s=e.target.closest('[data-slot]'); if(!s) return;
+  e.preventDefault(); s.classList.remove('drag');
+  const id=s.dataset.slot; const dt=e.dataTransfer; if(!dt) return;
+  const file=imageFileFrom(dt.files)||imageFileFrom(dt.items);
+  if(file){ saveImage(id,fileToDataUrl(file)); return; }
+  const uri=(dt.getData('text/uri-list')||dt.getData('text/plain')||'').trim();
+  const html=dt.getData('text/html')||'';
+  const m=html.match(/src="(data:image\/[^"]+)"/);
+  const dataSrc=uri.indexOf('data:image/')===0?uri:(m?m[1]:'');
+  if(dataSrc){ saveImage(id,srcToDataUrl(dataSrc)); return; }
+  setActiveSlot(id);
+  toast('That site only sent a link, not the picture. Right-click the picture, choose "Copy Image", then click this box and paste (Ctrl+V / ⌘V).');
+});
+/* Stop a missed drop from navigating the page away */
+document.addEventListener('dragover',function(e){ if(!e.target.closest||!e.target.closest('[data-slot]')) e.preventDefault(); });
+document.addEventListener('drop',function(e){ if(!e.target.closest||!e.target.closest('[data-slot]')){ e.preventDefault(); if(S.view==='setup') toast('Drop the picture onto one of the hero boxes.'); } });
+document.addEventListener('paste',function(e){
+  if(S.view!=='setup') return;
+  const file=imageFileFrom(e.clipboardData&&e.clipboardData.items)||imageFileFrom(e.clipboardData&&e.clipboardData.files);
+  if(!file) return;
+  e.preventDefault();
+  if(!S.activeSlot){ toast('Click a hero box first, then paste.'); return; }
+  saveImage(S.activeSlot,fileToDataUrl(file));
+});
+
+document.addEventListener('keydown',function(e){
+  if(!S.padActive) return;
+  const tag=e.target&&e.target.tagName; if(tag==='INPUT'||tag==='TEXTAREA') return;
+  if(/^[0-9]$/.test(e.key)){padKey(e.key);e.preventDefault();}
+  else if(e.key==='Backspace'){padKey('DEL');e.preventDefault();}
+  else if(e.key==='Enter'){padKey('GO');e.preventDefault();}
+});
+
+initStore().then(function(){ prog(); render(); });
+})();
+</script>
+</body>
+</html>
