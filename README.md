@@ -4,11 +4,26 @@
 
 I built Hero Academy for my 8-year-old, a third grader who knew his 1s, 5s, 9s, 10s and 11s but still counted up to solve anything with a 3, 4, 6, 7 or 8. Instead of another flashcard app, I started from the research on how children actually become fluent with math facts, then wrapped it in a superhero story he'd want to come back to every day.
 
-**▶ Play it:** _add your GitHub Pages link here_
+**▶ Play it:** https://spkrause-maker.github.io/hero-academy/
+
+<img src="docs/screenshots/05-home-mid-chapter.png" alt="Home screen mid-chapter: the villain's 15-piece shield, a single 'Start mission' next move, the How to win loop, and the path of three chapters to the final battle" width="100%">
 
 ## The idea in one paragraph
 
 A villain's force shield is made of the **15 multiplication facts** a child has left to learn. Each fact is a hero. The heroes are grouped into three teams, and each team's "superpower" is a real mental-math strategy: *double, then double again* for 4s and 8s; *2 groups + 1 more* for 3s; *5 groups + the rest* for 6s and 7s. Kids learn a power in a short lesson, then use it in daily 6-minute missions to power up that team's heroes. Every fact mastered cracks the shield, and when all 15 heroes are powered, it's time for the final battle.
+
+## Screenshots
+
+The heroes below show the built-in placeholder badges. Families add their own pictures and names in Parent setup.
+
+| | |
+|---|---|
+| <img src="docs/screenshots/02-training-lesson.png" alt="Training lesson: a dot grid builds 8 × 6 by doubling three times, 6 → 12 → 24 → 48"> | <img src="docs/screenshots/03-mission.png" alt="Mission: question 8 × 4 with a number pad, the villain's health bar, and a strip showing which heroes are correct, current and coming up"> |
+| **Training lesson.** Each chapter teaches its strategy first. Here, 8 × 6 by doubling three times. | **Mission.** Answers are typed from memory. The strip below tracks every hero in the mission. |
+| <img src="docs/screenshots/04-training-room.png" alt="Training Room after a miss: the 8 × 6 dot grid and doubling steps, with a prompt to type the answer"> | <img src="docs/screenshots/06-chapter-complete.png" alt="Debrief: Chapter 1 complete banner and each hero's rank change"> |
+| **Training Room.** A miss shows the strategy, then the child types the right answer. | **Debrief.** Rank changes for each hero, and a banner when a chapter is finished. |
+| <img src="docs/screenshots/01-home-start.png" alt="Home screen before any training: Learn the Doublers' power, Start training"> | <img src="docs/screenshots/07-phone-home.png" alt="Phone layout of the home screen with the Start mission button above the fold" width="60%"> |
+| **First visit.** One next move: learn the first power. | **Phone.** The main button sits above the fold. |
 
 ## What the research says, and what the game does about it
 

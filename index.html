@@ -469,7 +469,7 @@ function viewLesson(){
   if(L.phase==='demo'){
     const ex=t.lessons[L.ex||0]; const a=ex.a,b=ex.b; const steps=strategySteps(a,b,L.team); const cur=steps[L.step];
     const lastStep=L.step===steps.length-1; const lastEx=(L.ex||0)===t.lessons.length-1; const last=lastStep&&lastEx;
-    return topbar()+'<div class="label">Training Academy</div><div class="display" style="font-size:38px;margin:4px 0 14px">'+esc(t.name).toUpperCase()+' POWER: '+esc(t.power).toUpperCase()+'</div>'+
+    return topbar()+'<div class="label">Training Academy</div><div class="display" style="font-size:38px;margin:4px 0 14px">'+esc(TEAM_POSS[L.team]).toUpperCase()+' POWER: '+esc(t.power).toUpperCase()+'</div>'+
     '<div class="row"><div class="panel" style="flex:0 1 auto">'+gridHTML(a,b,L.team,cur.rows)+'</div>'+
     '<div class="panel col" style="flex:1 1 300px">'+(t.lessons.length>1?'<div class="label">Example '+((L.ex||0)+1)+' of '+t.lessons.length+'</div>':'')+'<div class="display" style="font-size:44px">'+a+' × '+b+'</div>'+
     (ex.note?'<div class="note">'+esc(ex.note)+'</div>':'')+
