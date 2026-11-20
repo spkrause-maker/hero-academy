@@ -13,6 +13,10 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="627">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#FACC15">
+<link rel="icon" type="image/png" href="icons/favicon-48.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{--ink:#18181B;--bg:#F4F4F5;--yellow:#FACC15;--blue:#1D4ED8;--muted:#52525B}
@@ -922,6 +926,12 @@ document.addEventListener('keydown',function(e){
 
 initStore().then(function(){ prog(); render(); });
 })();
+</script>
+<script>
+/* Install support: register the offline helper when served over https (e.g. GitHub Pages) */
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });
+}
 </script>
 </body>
 </html>
